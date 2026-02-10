@@ -1,0 +1,79 @@
+model_list:
+  # --- INTENT-BASED ALIASES (CAPABILITY-FIRST) ---
+  - model_name: omni-1
+    litellm_params:
+      model: github/gpt-4o
+      api_key: os.environ/GITHUB_API_KEY
+      fallbacks: ["claude-4-6-opus", "sonar-reasoning-pro", "gemini-3-pro", "llama-4-scout", "mistral-large-3", "kimi-k2-5"]
+
+  - model_name: omni-reasoning
+    litellm_params:
+      model: github/gpt-4o # Rank #1
+      api_key: os.environ/GITHUB_API_KEY
+      fallbacks: ["gemini-3-pro"]
+
+  - model_name: omni-creative
+    litellm_params:
+      model: github/claude-3-5-sonnet-v2 # Rank #1 Creative
+      api_key: os.environ/GITHUB_API_KEY
+      fallbacks: ["kimi-k2-5"]
+
+  - model_name: omni-fast
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile # LPU Speed
+      api_key: os.environ/GROQ_API_KEY
+      fallbacks: ["mistral-large-3"]
+
+  # --- TIERED PROVIDERS (MAPPED) ---
+  - model_name: gpt-5.3-codex
+    litellm_params:
+      model: github/gpt-4o
+      api_key: os.environ/GITHUB_API_KEY
+  
+  - model_name: claude-4-6-opus
+    litellm_params:
+      model: github/claude-3-5-sonnet-v2
+      api_key: os.environ/GITHUB_API_KEY
+
+  - model_name: sonar-reasoning-pro
+    litellm_params:
+      model: perplexity/sonar-reasoning-pro
+      api_key: os.environ/PERPLEXITY_API_KEY
+
+  - model_name: gemini-3-pro
+    litellm_params:
+      model: gemini/gemini-1.5-pro
+      api_key: os.environ/GEMINI_API_KEY
+
+  - model_name: llama-4-scout
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY
+
+  - model_name: mistral-large-3
+    litellm_params:
+      model: mistral/mistral-large-latest
+      api_key: os.environ/MISTRAL_API_KEY
+
+  - model_name: kimi-k2-5
+    litellm_params:
+      model: openrouter/moonshotai/kimi-k2.5
+      api_key: os.environ/OPENROUTER_API_KEY
+
+router_settings:
+  routing_strategy: "simple-shuffle" # Best for quota distribution if weights allowed
+  context_window_fallbacks:
+    - model: github/gpt-4o
+      fallback_model: gemini/gemini-1.5-pro
+
+litellm_settings:
+  cache: true
+  cache_type: "redis"
+  redis_host: "redis"
+  redis_port: 6379
+  drop_params: true
+  set_verbose: false
+  json_logs: true
+  max_user_budget: 5.0
+  budget_duration: 1d
+  default_fallbacks: ["mistral-large-3"]

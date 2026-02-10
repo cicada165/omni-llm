@@ -1,0 +1,45 @@
+services:
+  litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./config.yaml:/app/config.yaml
+      - ./orchestrator.py:/app/orchestrator.py
+    env_file:
+      - .env
+    command:
+      [
+        "--config",
+        "/app/config.yaml",
+        "--port",
+        "4000",
+        "--num_workers",
+        "4", # Optimized for M1 Max cores (efficiency cores handling I/O)
+        "--detailed_debug"
+      ]
+    depends_on:
+      - redis
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0' # Allow decent burst usage on M1 Max
+          memory: 4G
+    restart: always
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --save 60 1 --loglevel warning
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+    restart: always
+
+volumes:
+  redis_data:

@@ -1,0 +1,26 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Docker
+*.log
+docker-compose.override.yml
+
+# Logs
+logs.txt
+*.log
+
+# Dependencies
+node_modules/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# System
+.DS_Store
+Thumbs.db
+
+# Omni-LLM Specific
+omni-llm/
+orchestrator.py

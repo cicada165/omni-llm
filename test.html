@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Omni-LLM Fallback Test</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #0f0;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background: #333;
+            color: #fff;
+            border: 1px solid #555;
+        }
+
+        #output {
+            margin-top: 20px;
+            white-space: pre-wrap;
+            border: 1px solid #333;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Omni-LLM Fallback Test</h1>
+    <p>Testing Models:</p>
+    <button onclick="runTest('omni-1')">Test Omni-1 (Universal)</button>
+    <button onclick="runTest('gpt-5.3-codex')">Test Elite (GitHub)</button>
+    <div id="output">Waiting...</div>
+
+    <script>
+        async function runTest(modelName) {
+            const output = document.getElementById('output');
+            output.innerText = "Sending request to " + modelName + "...";
+
+            try {
+                const response = await fetch('http://localhost:4000/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer sk-1234'
+                    },
+                    body: JSON.stringify({
+                        model: modelName,
+                        messages: [{ role: "user", content: "Hello, who are you?" }]
+                    })
+                });
+
+                const data = await response.json();
+                output.innerText = JSON.stringify(data, null, 2);
+            } catch (e) {
+                output.innerText = "Error: " + e.message;
+            }
+        }
+    </script>
+</body>
+
+</html>
